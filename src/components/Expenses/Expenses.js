@@ -1,5 +1,6 @@
 import Expenseitem from "./Expenseitem";
 import './Expenses.css'
+import '../Ui/Card.css'
 function Expenses(props) {
     console.log(props.data)
     return (
