@@ -2,55 +2,94 @@ import React,{useState} from 'react'
 
 import './ExpenseForm.css'
 
-const ExpenseForm = () => {
+const ExpenseForm = (props) => {
     const [enteredTitle,setEnteredTitle] = useState('')
+    const [date,setDate] = useState('')
+    const [enteredAmount,setEnteredAmount] = useState('')
+    
+    //  const [enteredInput,setEnteredInput]=useState({
+    //     enteredTitle:'',
+    //     enteredAmount:'',
+    //     date:''
+    //  })
+
     const titleChangeHandler = (event) => {
          setEnteredTitle(event.target.value)
+        // setEnteredInput({
+        //     enteredTitle:event.target.value,
+        //     enteredAmount:'',
+        //     date:''
+        // })
+        // setEnteredInput((prevState) => {
+        //     return {...prevState, enteredTitle:event.target.value}
+        // })
     }
-    const [enteredAmount,setEnteredAmount] = useState('')
+    
     const amountChangeHandler = (event) => {
         setEnteredAmount(event.target.value)
+        // setEnteredInput({...enteredInput,enteredAmount:event.target.value})
     }
 
-    const [date,setDate] = useState('')
     const dateHandler = (event) => {
         setDate(event.target.value)
+        // setEnteredInput({...enteredInput,date:event.target.value})
     }
 
-    const submit = (event) => {
-        event.preventDefaut()
-        const values = {title:enteredTitle,amount:enteredAmount,date:date}
-        console.log(enteredAmount)
-        console.log(enteredTitle)
-        console.log(date)
+
+    const submitHandler = (event) => {
+        event.preventDefault()
+        const data = {title:enteredTitle,amount:+enteredAmount,date:new Date(date)}
+        props.onSaveExpenseData(data)
+        setEnteredAmount('')
+        setEnteredTitle('')
+        setDate('')
+        cancel()
+    }
+
+    const [clicked,setClicked] = useState('false')
+    let form
+
+    function addExpense() {
+        setClicked(true)
+    }
+
+    function cancel() {
+        setClicked(false)
+    }
+
+    if(clicked === true) {
+        form = <form onSubmit={submitHandler}>
+        <div className='new-expense__controls'>
+            <div className='new-expense__control'>
+                <label>
+                    Title
+                </label>
+                <input type='text' name='username' value={enteredTitle} onChange={titleChangeHandler}></input>
+            </div>
+            <div className='new-expense__control'>
+                <label>
+                    Amount
+                </label>
+                <input type='number' name='amount' min='1' step='1' value={enteredAmount} onChange={amountChangeHandler}></input>
+            </div>
+            <div className='new-expense__control'>
+                <label>
+                    Title
+                </label>
+                <input type='date' name='date' value={date} onChange={dateHandler}></input>
+            </div>
+        </div>
+        <div className='new-expense__actions'>
+            <button type='submit'>Add Expense</button>
+            <button type='button' onClick={cancel}>Cancel</button>
+        </div>
+    </form>
     }
 
     return (
-        <form>
-            <div className='new-expense__controls'>
-                <div className='new-expense__control'>
-                    <label>
-                        Title
-                    </label>
-                    <input type='text' name='username' onChange={titleChangeHandler}></input>
-                </div>
-                <div className='new-expense__control'>
-                    <label>
-                        Amount
-                    </label>
-                    <input type='number' name='amount' min='1' step='1' onChange={amountChangeHandler}></input>
-                </div>
-                <div className='new-expense__control'>
-                    <label>
-                        Title
-                    </label>
-                    <input type='date' name='date' onChange={dateHandler}></input>
-                </div>
-            </div>
-            <div className='new-expense__actions'>
-                <button type='submit' onSubmit={submit}>Add Expense</button>
-            </div>
-        </form>
+        <div>
+             {clicked === true ? (form) : (<button onClick={addExpense}>Add Expense</button>)}
+        </div>
     )
 }
 
